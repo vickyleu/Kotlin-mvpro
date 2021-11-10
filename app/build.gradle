@@ -12,14 +12,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion "$maxSdk_version".toInteger()
+    compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion "$minSdk_version".toInteger()
-        targetSdkVersion "$maxSdk_version".toInteger()
+        minSdkVersion 21
+        targetSdkVersion 31
 
         applicationId "com.github.kotlin_mvpro"
         versionCode 10
@@ -36,8 +35,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled true
+    buildFeatures {
+//        viewBinding true
+        dataBinding true
     }
     lintOptions {
         abortOnError false
@@ -48,8 +48,12 @@ kapt {
 }
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
+    constraints {
+        implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"){
+            because 'previous versions have a bug impacting this application'
+        }
+    }
     implementation project(':library')
-    kapt "androidx.databinding:databinding-compiler:$build_gradle_version"//option？
-    kapt 'nz.bradcampbell:paperparcel-compiler:2.0.1'//Instance
+    kapt 'nz.bradcampbell:paperparcel-compiler:2.0.4'//Instance
     kapt 'com.github.mzule.activityrouter:compiler:1.1.7'
 }
