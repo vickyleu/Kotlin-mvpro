@@ -25,7 +25,7 @@ internal object PresenterFactory {
 
 
     fun <T : BasePresenter<*>> createPresenter(aty: BaseBindingActivity<*, *>): T {
-        val trans = aty.supportFragmentManager.beginTransaction()
+        val trans = aty.fragmentManager.beginTransaction()
         val presenterClass = try {
             (aty::class.java.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<T>
         } catch (e: Exception) {
@@ -33,7 +33,7 @@ internal object PresenterFactory {
                     "try EmptyPresenter If there is no presenter")
         }
         val args = if (aty.intent.extras != null) Bundle(aty.intent.extras) else Bundle()
-        var presenter = aty.supportFragmentManager.findFragmentByTag(presenterClass.canonicalName) as T?
+        var presenter = aty.fragmentManager.findFragmentByTag(presenterClass.canonicalName) as T?
         if (presenter == null || presenter.isDetached) {
             presenter = Fragment.instantiate(aty, presenterClass.canonicalName, args) as T
             trans.add(0, presenter, presenterClass.canonicalName)

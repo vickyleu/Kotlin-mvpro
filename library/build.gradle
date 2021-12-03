@@ -9,32 +9,51 @@
  *
  */
 
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+group = 'com.github.vickyleu'
+version = '1.0.0'
 
 android {
-    compileSdkVersion 31
-
+    compileSdkVersion 30
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdkVersion 16
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
     }
-
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        abortOnError false
+    }
     buildFeatures {
-//        viewBinding true
         dataBinding true
     }
 }
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleDependency
     api "androidx.appcompat:appcompat:1.3.1"
     api 'androidx.multidex:multidex:2.0.1'
     //kotlin
     constraints {
-        api ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"){
+        api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version") {
             because 'previous versions have a bug impacting this application'
         }
     }
@@ -49,50 +68,53 @@ dependencies {
     api "com.squareup.okhttp3:logging-interceptor:4.9.1"
     api "com.squareup.okhttp3:okhttp:4.9.1"
     //https://github.com/vihuela/Retrofitplus
-    api 'com.ricky:retrofitExceptionDispatcher:0.6'
+    api 'com.github.vickyleu:Retrofitplus:1.0.0'
     //rx
-    api "io.reactivex.rxjava2:rxjava:2.2.19"
-    api "io.reactivex.rxjava2:rxkotlin:2.4.0"
-    api "io.reactivex.rxjava2:rxandroid:2.1.1"
-
-
-    api "com.trello.rxlifecycle4:rxlifecycle:4.0.2"
-    api "com.trello.rxlifecycle4:rxlifecycle-android:4.0.2"
-    api "com.trello.rxlifecycle4:rxlifecycle-components:4.0.2"
-//    api "com.trello.rxlifecycle4:rxlifecycle-components-preference:4.0.2"
-    api "com.trello.rxlifecycle4:rxlifecycle-kotlin:4.0.2"
-    api "com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:4.0.2"
-    api "com.trello.rxlifecycle4:rxlifecycle-android-lifecycle-kotlin:4.0.2"
-
-
 
 
     api "com.jakewharton.rxbinding2:rxbinding:2.2.0"
     api "com.jakewharton.rxbinding2:rxbinding-support-v4:2.2.0"
     api "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.2.0"
+
     api "com.github.VictorAlbertos.RxCache:runtime:1.8.3-2.x"
-    api "com.github.VictorAlbertos.Jolyglot:gson:0.0.4"
+    api 'com.github.VictorAlbertos.Jolyglot:api:0.0.6'
+    api 'com.github.VictorAlbertos.Jolyglot:gson:0.0.6'
+
     api "com.github.pwittchen:reactivenetwork-rx2:2.1.0"
-    api "com.tbruyelle.rxpermissions2:rxpermissions:0.9.4"
+    api "com.github.tbruyelle:rxpermissions:0.11"
     //utils
     api 'org.greenrobot:eventbus:3.2.0'
     //smooth open image,https://github.com/Hitomis/transferee
-    api 'com.github.Hitomis.transferee:Transferee:v1.1.0'
+    api 'com.github.Hitomis.transferee:Transferee:1.6.1'
     api 'com.github.Hitomis.transferee:GlideLoader:v1.1.0'
+
     api 'io.paperdb:paperdb:2.6'//db
-    api 'com.blankj:utilcode:1.22.0'
+    implementation 'com.blankj:utilcodex:1.30.6'
     api 'com.github.bumptech.glide:glide:4.12.0'
-    api 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'//tab
+    api 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2'//tab
     api 'nz.bradcampbell:paperparcel:2.0.4'//持久化
     api 'nz.bradcampbell:paperparcel-kotlin:2.0.4'
     api 'com.github.Kennyc1012:MultiStateView:1.3.2'//视图状态切换
     api 'com.just.agentweb:agentweb:4.0.2'//webView
     api 'com.github.mzule.activityrouter:activityrouter:1.2.2'//路由
     //https://github.com/vihuela/RefreshLayout
-    api('com.ricky:refreshLayout:0.4.2')
-    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6'
-
+    compileOnly 'com.github.vickyleu:RefreshLayout:1.0.0'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7'
     //mvpro
-    api(project(':mvp-core'), { exclude group: 'com.trello.rxlifecycle4' })
-//    compile('com.ricky:mvpro-kotlin:1.3', { exclude group: 'com.trello.rxlifecycle2' })
+    api project(':mvp-core')
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.vickyleu'
+                artifactId = 'mvp'
+                version = '1.0.0'
+            }
+        }
+    }
 }

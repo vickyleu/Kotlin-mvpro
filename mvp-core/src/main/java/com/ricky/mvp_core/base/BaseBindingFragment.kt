@@ -23,12 +23,17 @@ import com.ricky.mvp_core.utils.PresenterFactory
 /**
  * no presenter use {@link EmptyPresenter}
  */
-abstract class BaseBindingFragment<T : BasePresenter<*>, B : ViewDataBinding> : BaseLazyFragment(), IView {
+abstract class BaseBindingFragment<T : BasePresenter<*>, B : ViewDataBinding> : BaseLazyFragment(),
+    IView {
 
     protected lateinit var mBinding: B
     protected lateinit var mPresenter: T
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         mBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
         mPresenter = PresenterFactory.createPresenter(this)
         return mBinding.root

@@ -24,20 +24,30 @@ import com.google.gson.Gson
 
 //Fragment
 fun Fragment.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
+    val toast = ToastUtils.make()
     when (length) {
-        Toast.LENGTH_SHORT -> ToastUtils.showShortSafe(msg)
-        Toast.LENGTH_LONG -> ToastUtils.showLongSafe(msg)
+        Toast.LENGTH_SHORT -> {
+            toast.setDurationIsLong(false)
+            toast.show(msg)
+        }
+        Toast.LENGTH_LONG -> {
+            toast.setDurationIsLong(true)
+            toast.show(msg)
+        }
     }
 }
 
 //Activity
 fun Activity.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
+    val toast = ToastUtils.make()
     when (length) {
         Toast.LENGTH_SHORT -> {
-            ToastUtils.showShortSafe(msg)
+            toast.setDurationIsLong(false)
+            toast.show(msg)
         }
         Toast.LENGTH_LONG -> {
-            ToastUtils.showLongSafe(msg)
+            toast.setDurationIsLong(true)
+            toast.show(msg)
         }
     }
 }
@@ -47,8 +57,10 @@ fun Activity.hideKeyboard(): Boolean {
     view?.let {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE)
                 as InputMethodManager
-        return inputMethodManager.hideSoftInputFromWindow(view.windowToken,
-                InputMethodManager.HIDE_NOT_ALWAYS)
+        return inputMethodManager.hideSoftInputFromWindow(
+            view.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
     return false
 }
@@ -62,8 +74,8 @@ fun Application.getRunningProcessList(): MutableList<ActivityManager.RunningAppP
 fun Application.getProcessName(): String? {
     val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     return am.runningAppProcesses
-            ?.find { it.pid == android.os.Process.myPid() }
-            ?.processName
+        ?.find { it.pid == android.os.Process.myPid() }
+        ?.processName
 }
 
 fun Application.killCurrentProcess() {

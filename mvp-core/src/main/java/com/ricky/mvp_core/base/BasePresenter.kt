@@ -17,7 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.ricky.mvp_core.base.interfaces.IView
 import com.ricky.mvp_core.utils.BehaviorMap
-import com.trello.rxlifecycle4.components.support.RxFragment
+import com.trello.rxlifecycle2.components.RxFragment
 
 /**
  *
@@ -34,7 +34,11 @@ abstract class BasePresenter<V : IView> : RxFragment() {
     var mView: V? = null
     val mBehaviorMap by lazy { BehaviorMap() }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         if (mView != null)
             onViewCreated(mView!!, arguments, savedInstanceState)
         return null
