@@ -16,13 +16,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.ricky.mvp_core.base.interfaces.IView
 import com.ricky.mvp_core.utils.PresenterFactory
-import com.trello.rxlifecycle2.components.RxActivity
+import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
 
 /**
  * no presenter use {@link EmptyPresenter}
  */
-abstract class BaseBindingActivity<T : BasePresenter<*>, B : ViewDataBinding> : RxActivity(),
-    IView {
+abstract class BaseBindingActivity<T : BasePresenter<*>, B : ViewDataBinding> : RxAppCompatActivity(), IView {
 
     protected lateinit var mBinding: B
     protected lateinit var mPresenter: T

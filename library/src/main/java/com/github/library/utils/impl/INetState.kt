@@ -17,14 +17,15 @@ import android.app.Application
 import android.net.NetworkInfo
 import android.os.Bundle
 import com.blankj.utilcode.util.SnackbarUtils
+import com.blankj.utilcode.util.Utils
 import com.github.library.R
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.trello.rxlifecycle2.LifecycleProvider
-import com.trello.rxlifecycle2.android.ActivityEvent
-import com.trello.rxlifecycle2.kotlin.bindUntilEvent
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.github.pwittchen.reactivenetwork.library.rx3.ReactiveNetwork
+import com.trello.rxlifecycle4.LifecycleProvider
+import com.trello.rxlifecycle4.android.ActivityEvent
+import com.trello.rxlifecycle4.kotlin.bindUntilEvent
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
 import java.util.concurrent.TimeUnit
 
@@ -36,7 +37,7 @@ interface INetState {
     fun observeNetwork(app: Application, netCallback: (isNetAvailable: Boolean) -> Unit) {
         val showSnackBar: (activity: Activity) -> Unit = { activity ->
             SnackbarUtils.with(activity.findViewById(android.R.id.content))
-                .setMessage(app.resources.getText(R.string.network_retry_tip))
+                .setMessage(Utils.getApp().resources.getText(R.string.network_retry_tip))
                 .setDuration(0)
                 .showWarning()
         }
@@ -44,6 +45,9 @@ interface INetState {
         val activityStateMap = mutableMapOf<String, Boolean>().withDefault { true }
 
         app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+            }
+
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 doAsync {
                     if (activity is LifecycleProvider<*>) {
@@ -55,7 +59,7 @@ interface INetState {
                                 ActivityEvent.DESTROY
                             )//release util onDestroy
                             .compose {//compose operate ObservableSource，not consumer callBack
-                                activityStateMap.put(activity.javaClass.simpleName, true)
+                                activityStateMap[activity.javaClass.simpleName] = true
                                 it.flatMap { Observable.just((it.available() && it.state() == NetworkInfo.State.CONNECTED)) }
                             }
                             .map {
@@ -84,10 +88,6 @@ interface INetState {
             }
 
             override fun onActivityStopped(activity: Activity) {
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-
             }
 
             override fun onActivityDestroyed(activity: Activity) {

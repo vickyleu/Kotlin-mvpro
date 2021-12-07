@@ -14,20 +14,19 @@ package com.github.library.utils.ext
 import android.app.Activity
 import com.blankj.utilcode.util.ToastUtils
 import com.ricky.mvp_core.base.BasePresenter
-import com.tbruyelle.rxpermissions2.RxPermissions
-import com.trello.rxlifecycle2.LifecycleProvider
-import com.trello.rxlifecycle2.android.ActivityEvent
-import com.trello.rxlifecycle2.android.FragmentEvent
-import com.trello.rxlifecycle2.components.RxActivity
-import com.trello.rxlifecycle2.kotlin.bindToLifecycle
-import com.trello.rxlifecycle2.kotlin.bindUntilEvent
+import com.tbruyelle.rxpermissions3.RxPermissions
+import com.trello.rxlifecycle4.LifecycleProvider
+import com.trello.rxlifecycle4.android.ActivityEvent
+import com.trello.rxlifecycle4.android.FragmentEvent
+import com.trello.rxlifecycle4.components.support.RxAppCompatActivity
+import com.trello.rxlifecycle4.kotlin.bindUntilEvent
 import github.library.parser.ExceptionParseMgr
 import github.library.utils.Error
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.processors.BehaviorProcessor
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.functions.BiFunction
+import io.reactivex.rxjava3.processors.BehaviorProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 //net error parse
@@ -80,7 +79,7 @@ fun <T> Observable<T>.defPolicy_Retry(
         null -> this.defThread().defRetry()
         else -> this.defThread().defRetry().bindToBehavior(baseP.mBehaviorMap[requestFlag])
     }
-    return if (lifecycle is RxActivity) {
+    return if (lifecycle is RxAppCompatActivity) {
         o.bindUntilEvent(lifecycle as LifecycleProvider<ActivityEvent>, ActivityEvent.DESTROY)
     } else {
         o.bindUntilEvent(lifecycle as LifecycleProvider<FragmentEvent>, FragmentEvent.DESTROY_VIEW)
@@ -89,7 +88,8 @@ fun <T> Observable<T>.defPolicy_Retry(
 
 fun <T> Observable<T>.defPolicy(lifecycle: LifecycleProvider<*>): Observable<T> = this
     .defThread()
-    .bindToLifecycle(lifecycle)
+    .compose(lifecycle.bindToLifecycle())
+//        .bindToLifecycle(lifecycle)
 
 @Deprecated("")
 fun BasePresenter<*>.getBehavior(behavior: BehaviorProcessor<Boolean>?): BehaviorProcessor<Boolean> {

@@ -1,6 +1,6 @@
 package com.ricky.mvp_core.utils
 
-import io.reactivex.processors.BehaviorProcessor
+import io.reactivex.rxjava3.processors.BehaviorProcessor
 
 
 class BehaviorMap : HashMap<String, BehaviorProcessor<Boolean>>() {
