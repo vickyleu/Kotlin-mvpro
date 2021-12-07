@@ -121,7 +121,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.vickyleu'
-                artifactId = 'mvp'
+                artifactId = 'Kotlin-mvpro'
                 version = '1.0.0'
             }
         }
