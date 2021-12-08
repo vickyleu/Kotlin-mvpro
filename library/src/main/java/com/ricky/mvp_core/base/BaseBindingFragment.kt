@@ -30,7 +30,7 @@ abstract class BaseBindingFragment<T : BasePresenter<*>, B : ViewDataBinding> : 
     protected lateinit var mPresenter: T
 
     override fun onCreateView(
-        inflater: LayoutInflater?,
+        inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {

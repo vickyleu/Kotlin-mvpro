@@ -19,7 +19,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.library.R
 import com.github.refresh.RefreshCustomerLayout
-import com.github.refresh.RefreshLayout
 import com.kennyc.view.MultiStateView
 import org.jetbrains.anko.findOptional
 
@@ -75,12 +74,12 @@ interface IStateView {
                 removeViewAt(targetIndex)
                 val stateView = MultiStateView(targetRoot.context).apply {
                     id = R.id.multiStateView
-                    setViewForState(targetContent, MultiStateView.VIEW_STATE_CONTENT)
-                    setViewForState(R.layout.error_view, MultiStateView.VIEW_STATE_ERROR)
-                    setViewForState(R.layout.empty_view, MultiStateView.VIEW_STATE_EMPTY)
-                    setViewForState(R.layout.loading_view, MultiStateView.VIEW_STATE_LOADING)
-                    setAnimateLayoutChanges(true)
-                    viewState = MultiStateView.VIEW_STATE_LOADING
+                    setViewForState(targetContent, MultiStateView.ViewState.CONTENT)
+                    setViewForState(R.layout.error_view, MultiStateView.ViewState.ERROR)
+                    setViewForState(R.layout.empty_view, MultiStateView.ViewState.EMPTY)
+                    setViewForState(R.layout.loading_view, MultiStateView.ViewState.LOADING)
+                    animateLayoutChanges = true
+                    viewState = MultiStateView.ViewState.LOADING
                 }
                 addView(stateView, targetIndex, targetContentLp)
             }
@@ -93,25 +92,26 @@ interface IStateView {
     fun onStateViewRetryListener() = Unit
 
     fun stateViewLoading() {
-        getStateView()?.viewState = MultiStateView.VIEW_STATE_LOADING
+        getStateView()?.viewState = MultiStateView.ViewState.LOADING
     }
 
     fun stateViewError(error: Any, content: String) {
         getStateView()?.apply {
-            viewState = MultiStateView.VIEW_STATE_ERROR
-            val errorView = getView(MultiStateView.VIEW_STATE_ERROR)?.findOptional<TextView>(R.id.tv)
-            val retryButton = getView(MultiStateView.VIEW_STATE_ERROR)?.findOptional<Button>(R.id.retry)
+            viewState = MultiStateView.ViewState.ERROR
+            val errorView = getView(MultiStateView.ViewState.ERROR)?.findOptional<TextView>(R.id.tv)
+            val retryButton =
+                getView(MultiStateView.ViewState.ERROR)?.findOptional<Button>(R.id.retry)
             errorView?.text = content
             retryButton?.setOnClickListener { onStateViewRetryListener() }
         }
     }
 
     fun stateViewEmpty() {
-        getStateView()?.viewState = MultiStateView.VIEW_STATE_EMPTY
+        getStateView()?.viewState = MultiStateView.ViewState.EMPTY
     }
 
     fun stateViewContent() {
-        getStateView()?.viewState = MultiStateView.VIEW_STATE_CONTENT
+        getStateView()?.viewState = MultiStateView.ViewState.CONTENT
     }
 
 

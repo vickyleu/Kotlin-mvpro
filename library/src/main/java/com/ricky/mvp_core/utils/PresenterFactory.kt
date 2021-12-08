@@ -57,8 +57,15 @@ internal object PresenterFactory {
         val args = if (frg.arguments != null) Bundle(frg.arguments) else Bundle()
         var presenter = frg.fragmentManager?.findFragmentByTag(presenterClass.canonicalName) as T?
         if (presenter == null || presenter.isDetached) {
-            presenter = Fragment.instantiate(frg.activity, presenterClass.canonicalName, args) as T
-            trans?.add(0, presenter, presenterClass.canonicalName)
+            if(frg.activity!=null){
+                presenter = Fragment.instantiate(frg.activity!!, presenterClass.canonicalName, args) as T
+                trans?.add(0, presenter, presenterClass.canonicalName)
+            }else{
+                throw IllegalArgumentException(
+                    "${frg.javaClass.simpleName} create presenter ERROR，" +
+                            "try EmptyPresenter If there is no presenter"
+                )
+            }
         }
         presenter.setView(frg)
         trans?.commitAllowingStateLoss()
